@@ -1,0 +1,56 @@
+{
+    "name": "spartan/queue",
+    "description": "Spartan Queue library",
+    "type": "library",
+    "keywords": [
+        "library",
+        "spartan",
+        "queue"
+    ],
+    "homepage": "https://spartanphp.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Iulian N.",
+            "email": "iulian@spartanphp.com",
+            "homepage": "https://spartanphp.com",
+            "role": "developer"
+        }
+    ],
+    "support": {
+        "email": "support@spartanphp.com",
+        "docs": "https://docs.spartanphp.com"
+    },
+    "require": {
+        "php": ">=7.4",
+        "enqueue/amqp-ext": "^0.10.0",
+        "enqueue/dsn": "^0.10.0",
+        "opis/closure": "^3.1",
+        "spartan/console": "^0.1.0",
+        "spartan/service": "^0.1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Spartan\\Queue\\": "src/"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.0",
+        "monolog/monolog": "^2.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Spartan\\Queue\\Test\\": "tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "scripts": {
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
