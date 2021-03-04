@@ -49,7 +49,30 @@
     "config": {
         "sort-packages": true
     },
-    "scripts": {
+    "extra": {
+        "spartan": {
+            "install": {
+                "env": {
+                    "QUEUE_ADAPTER": "amqp+ext",
+                    "QUEUE_RABBIT_HOST": "localhost",
+                    "QUEUE_RABBIT_PORT": "5672",
+                    "QUEUE_RABBIT_VHOST": "/",
+                    "QUEUE_RABBIT_USER": "rabbit",
+                    "QUEUE_RABBIT_PASS": "@php \\Spartan\\Provisioner\\Command\\Password\\Make::generate(24);",
+                    "QUEUE_RABBIT_PERSISTENCE": 1,
+                    "QUEUE_RABBIT_PRIORITY": 10
+                },
+                "copy": {
+                    "config/queue.php": "config/queue.php"
+                },
+                "commands": [
+                    "__DIR__ . '/../vendor/spartan/queue/src/Command'"
+                ],
+                "services": [
+                    "Spartan\\Queue\\ServiceProvider::class"
+                ]
+            }
+        }
     },
     "minimum-stability": "dev",
     "prefer-stable": true
