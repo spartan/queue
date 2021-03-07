@@ -1,4 +1,16 @@
 # Changelog
+### [0.1.2](https://github.com/spartan/queue/compare/v0.1.1...v0.1.2) (2021-03-07)
+
+
+### Fixes
+
+* use rabbit as default adapter name on provision ([94fcb78](https://github.com/spartan/queue/commit/94fcb78784fa44435cd305cee11a4323a5cf125e))
+
+
+### Changes
+
+* use Command::loadEnv static method ([8c55c46](https://github.com/spartan/queue/commit/8c55c461a85827d66b299771aad08b322154cf1d))
+
 ### [0.1.1](https://github.com/spartan/queue/compare/v0.1.0...v0.1.1) (2021-03-04)
 
 
