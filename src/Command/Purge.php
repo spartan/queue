@@ -37,7 +37,7 @@ class Purge extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->loadEnv();
+        self::loadEnv();
 
         Start::manager($this->con)
              ->withQueue($this->queue ?? Manager::QUEUE_NAME)
