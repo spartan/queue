@@ -53,7 +53,7 @@
         "spartan": {
             "install": {
                 "env": {
-                    "QUEUE_ADAPTER": "amqp+ext",
+                    "QUEUE_ADAPTER": "rabbit",
                     "QUEUE_RABBIT_HOST": "localhost",
                     "QUEUE_RABBIT_PORT": "5672",
                     "QUEUE_RABBIT_VHOST": "/",
