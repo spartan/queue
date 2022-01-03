@@ -61,6 +61,16 @@ class Manager
     protected bool $verbosity = false;
 
     /**
+     * @var mixed
+     */
+    protected $ackHandler = null;
+
+    /**
+     * @var mixed
+     */
+    protected $errHandler = null;
+
+    /**
      * Manager constructor.
      *
      * @param Context                 $context
@@ -183,6 +193,20 @@ class Manager
     public function withVerbosity($verbosity = true)
     {
         $this->verbosity = $verbosity;
+
+        return $this;
+    }
+
+    public function withErrHandler($handler)
+    {
+        $this->errHandler = $handler;
+
+        return $this;
+    }
+
+    public function withAckHandler($handler)
+    {
+        $this->ackHandler = $handler;
 
         return $this;
     }
@@ -336,6 +360,10 @@ class Manager
                 $task();
                 if (!$task->isFailed()) {
                     $task->markAsFinished();
+                } elseif ($this->errHandler) {
+                    $className = $this->errHandler;
+                    $object    = new $className;
+                    $object($this, $message);
                 }
             } catch (\Exception $e) {
                 // if errors are not handled by task
@@ -353,6 +381,12 @@ class Manager
             }
 
             $consumer->acknowledge($message);
+
+            if ($this->ackHandler) {
+                $className = $this->ackHandler;
+                $object    = new $className;
+                $object($this, $message);
+            }
 
             return true;
         };

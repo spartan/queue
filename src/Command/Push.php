@@ -1,6 +1,6 @@
 <?php
 
-namespace Spartan\Event\Command;
+namespace Spartan\Queue\Command;
 
 use Spartan\Console\Command;
 use Spartan\Queue\Manager;

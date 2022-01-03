@@ -1,9 +1,8 @@
 <?php
 
-namespace Spartan\Event\Command;
+namespace Spartan\Queue\Command;
 
 use Spartan\Console\Command;
-use Spartan\Enum\Priority;
 use Spartan\Queue\Manager;
 use Spartan\Queue\Task\Consumer;
 use Symfony\Component\Console\Input\InputInterface;

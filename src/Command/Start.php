@@ -1,6 +1,6 @@
 <?php
 
-namespace Spartan\Event\Command;
+namespace Spartan\Queue\Command;
 
 use Spartan\Console\Command;
 use Spartan\Queue\Manager;
@@ -13,10 +13,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  * @property string $con
  * @property string $queue
  * @property int    $consumers
- * @property int    $tries
- * @property int    $delay
- * @property int    $timeout
  * @property int    $wait
+ * @property string $ack
+ * @property string $err
  *
  * @package Spartan\Event
  * @author  Iulian N. <iulian@spartanphp.com>
@@ -30,7 +29,9 @@ class Start extends Command
              ->withOption('con', 'Connection to use. Can also be a DSN.')
              ->withOption('queue', 'Queue name', 'pipeline')
              ->withOption('consumers', 'How many consumers to use (default=2)', 2)
-             ->withOption('wait', 'How many seconds to wait until making connection (default=0)', 0);
+             ->withOption('wait', 'How many seconds to wait until making connection (default=0)', 0)
+             ->withOption('ack', 'Ack handler - run each time after the message was acknowledged', null)
+             ->withOption('err', 'Err handler - run each time when a task has failed', null);
     }
 
     /**
@@ -50,7 +51,9 @@ class Start extends Command
 
         $manager = ($this->manager($this->con))
             ->withQueue($this->queue ?: Manager::QUEUE_NAME)
-            ->withVerbosity($output->isVerbose());
+            ->withVerbosity($output->isVerbose())
+            ->withErrHandler($this->err ?: null)
+            ->withAckHandler($this->ack ?: null);
 
         if ($output->isVerbose()) {
             $output->writeln('Listening...');
