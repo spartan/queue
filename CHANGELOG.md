@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.3](https://github.com/spartan/queue/compare/v0.1.2...v0.1.3) (2022-01-03)
+
+
+### Changes
+
+* cleanup commands + add err and ack handlers from start command ([74dc25a](https://github.com/spartan/queue/commit/74dc25ab54e5bfe07115a2e8c88b39796c64b228))
+
 ### [0.1.2](https://github.com/spartan/queue/compare/v0.1.1...v0.1.2) (2021-03-07)
 
 
