@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.4](https://github.com/spartan/queue/compare/v0.1.3...v0.1.4) (2022-09-10)
+
+
+### Fixes
+
+* err handler ([74dd1eb](https://github.com/spartan/queue/commit/74dd1eb654a93d2d3cdd973bc2feefd0ea85b2a5))
+
 ### [0.1.3](https://github.com/spartan/queue/compare/v0.1.2...v0.1.3) (2022-01-03)
 
 
