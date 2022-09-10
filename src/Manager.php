@@ -123,7 +123,7 @@ class Manager
      *
      * @return $this
      */
-    public function withQueue(string $name, int $flags = 0)
+    public function withQueue(string $name, int $flags = 0, array $args = [])
     {
         $this->queue = $this->context->createQueue($name);
 
@@ -136,7 +136,9 @@ class Manager
         }
 
         if (getenv('QUEUE_RABBIT_PRIORITY')) {
-            $this->queue->setArguments(['x-max-priority' => (int)getenv('QUEUE_RABBIT_PRIORITY')]);
+            $this->queue->setArguments(
+                ['x-max-priority' => (int)getenv('QUEUE_RABBIT_PRIORITY')] + $args
+            );
         }
 
         $this->context->declareQueue($this->queue);
@@ -273,9 +275,9 @@ class Manager
      * @throws \Interop\Queue\Exception\InvalidDestinationException
      * @throws \Interop\Queue\Exception\InvalidMessageException
      */
-    public function enqueue(TaskInterface $task, array $attributes = []): self
+    public function enqueue(TaskInterface $task, array $attributes = [], array $headers = []): self
     {
-        $queueMessage = $this->context->createMessage(\Opis\Closure\serialize($task));
+        $queueMessage = $this->context->createMessage(\Opis\Closure\serialize($task), [], $headers);
 
         if (getenv('QUEUE_RABBIT_PERSISTENCE')) {
             $queueMessage->setDeliveryMode(AmqpMessage::DELIVERY_MODE_PERSISTENT);
@@ -360,24 +362,26 @@ class Manager
                 $task();
                 if (!$task->isFailed()) {
                     $task->markAsFinished();
-                } elseif ($this->errHandler) {
-                    $className = $this->errHandler;
-                    $object    = new $className;
-                    $object($this, $message);
                 }
             } catch (\Exception $e) {
                 // if errors are not handled by task
-                throw new ConsumerException(
-                    (string)json_encode(
-                        [
-                            'message' => $e->getMessage(),
-                            'file'    => $e->getFile() . ':' . $e->getLine(),
-                            'queue'   => $consumer->getQueue()->getQueueName(),
-                            'task'    => $message->getBody(),
-                            'time'    => date('Y-m-d H:i:s'),
-                        ]
-                    )
-                );
+                if ($this->errHandler) {
+                    $className = $this->errHandler;
+                    $object    = new $className;
+                    $object($this, $task);
+                } else {
+                    throw new ConsumerException(
+                        (string)json_encode(
+                            [
+                                'message' => $e->getMessage(),
+                                'file'    => $e->getFile() . ':' . $e->getLine(),
+                                'queue'   => $consumer->getQueue()->getQueueName(),
+                                'task'    => $message->getBody(),
+                                'time'    => date('Y-m-d H:i:s'),
+                            ]
+                        )
+                    );
+                }
             }
 
             $consumer->acknowledge($message);
