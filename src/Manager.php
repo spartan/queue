@@ -375,6 +375,7 @@ class Manager
                             [
                                 'message' => $e->getMessage(),
                                 'file'    => $e->getFile() . ':' . $e->getLine(),
+                                'trace'   => $e->getTrace(),
                                 'queue'   => $consumer->getQueue()->getQueueName(),
                                 'task'    => $message->getBody(),
                                 'time'    => date('Y-m-d H:i:s'),
