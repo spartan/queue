@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.5](https://github.com/spartan/queue/compare/v0.1.4...v0.1.5) (2023-02-05)
+
+
+### New
+
+* show error trace in consumer exceptions details ([225e477](https://github.com/spartan/queue/commit/225e47784c7d64fa06a7d524123445312ac2072e))
+
 ### [0.1.4](https://github.com/spartan/queue/compare/v0.1.3...v0.1.4) (2022-09-10)
 
 
