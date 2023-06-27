@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.7](https://github.com/spartan/queue/compare/v0.1.6...v0.1.7) (2023-06-27)
+
+
+### New
+
+* enqueue_delay function ([d1fe771](https://github.com/spartan/queue/commit/d1fe771144b67997cd2aad88880023c6328a499f))
+
 ### [0.1.6](https://github.com/spartan/queue/compare/v0.1.5...v0.1.6) (2023-06-26)
 
 
