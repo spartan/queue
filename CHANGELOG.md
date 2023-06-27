@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.8](https://github.com/spartan/queue/compare/v0.1.7...v0.1.8) (2023-06-27)
+
+
+### Fixes
+
+* regression fix ([644551e](https://github.com/spartan/queue/commit/644551e967a3884d02717a39185cc7b320737c3b))
+
 ### [0.1.7](https://github.com/spartan/queue/compare/v0.1.6...v0.1.7) (2023-06-27)
 
 
