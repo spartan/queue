@@ -17,14 +17,11 @@ if (!function_exists('enqueue')) {
      */
     function enqueue(TaskInterface $task, string $queue = Manager::QUEUE_NAME): Manager
     {
-        static $manager;
+        $manager = Manager::instance(container());
 
-        if (!$manager) {
-            $manager = Manager::instance(container());
-        }
+        $manager->withQueue($queue);
 
-        return $manager->withQueue($queue)
-                       ->enqueue($task);
+        return $manager->enqueue($task);
     }
 }
 
@@ -42,16 +39,14 @@ if (!function_exists('enqueue_delayed')) {
      */
     function enqueue_delayed(TaskInterface $task, string $queue = Manager::QUEUE_NAME, int $delay = 0): Manager
     {
-        static $manager;
+        $manager = Manager::instance(container());
 
-        if (!$manager) {
-            $manager = Manager::instance(container());
-            $manager->context()->setDelayStrategy(new RabbitMqDlxDelayStrategy());
-        }
+        $manager->context()->setDelayStrategy(new RabbitMqDlxDelayStrategy());
 
         $manager->producer()->setDeliveryDelay($delay * 1000); // seconds * 1000 = milliseconds
 
-        return $manager->withQueue($queue)
-                       ->enqueue($task);
+        $manager->withQueue($queue);
+
+        return $manager->enqueue($task);
     }
 }
