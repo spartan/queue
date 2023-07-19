@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.9](https://github.com/spartan/queue/compare/v0.1.8...v0.1.9) (2023-07-19)
+
+
+### New
+
+* add MoveOnError handler ([42a0471](https://github.com/spartan/queue/commit/42a047158136cbfc1d6077048fdce843e16f4683))
+
 ### [0.1.8](https://github.com/spartan/queue/compare/v0.1.7...v0.1.8) (2023-06-27)
 
 
