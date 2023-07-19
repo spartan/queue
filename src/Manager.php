@@ -368,7 +368,7 @@ class Manager
                 if ($this->errHandler) {
                     $className = $this->errHandler;
                     $object    = new $className;
-                    $object($this, $task);
+                    $object($this, $task, $e, $consumer->getQueue()->getQueueName());
                 } else {
                     throw new ConsumerException(
                         (string)json_encode(
