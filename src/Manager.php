@@ -366,7 +366,7 @@ class Manager
             } catch (\Exception $e) {
                 // if errors are not handled by task
                 if ($this->errHandler) {
-                    $className = $this->errHandler;
+                    $className = trim($this->errHandler, '\'"');
                     $object    = new $className;
                     $object($this, $task, $e, $consumer->getQueue()->getQueueName());
                 } else {
