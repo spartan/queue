@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.10](https://github.com/spartan/queue/compare/v0.1.9...v0.1.10) (2023-07-22)
+
+
+### Fixes
+
+* define err handler class in cli using brackets ([078bf30](https://github.com/spartan/queue/commit/078bf30a15392cbbe612b8a657072ae2d7fcd556))
+
 ### [0.1.9](https://github.com/spartan/queue/compare/v0.1.8...v0.1.9) (2023-07-19)
 
 
