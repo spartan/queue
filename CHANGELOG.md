@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.11](https://github.com/spartan/queue/compare/v0.1.10...v0.1.11) (2024-01-20)
+
+
+### Fixes
+
+* ack handler class param quote issue ([ca7ed9d](https://github.com/spartan/queue/commit/ca7ed9deb747aa3bdd8090ec5d314e5d257f9690))
+
 ### [0.1.10](https://github.com/spartan/queue/compare/v0.1.9...v0.1.10) (2023-07-22)
 
 
