@@ -388,7 +388,7 @@ class Manager
             $consumer->acknowledge($message);
 
             if ($this->ackHandler) {
-                $className = $this->ackHandler;
+                $className = trim($this->ackHandler, '\'"');
                 $object    = new $className;
                 $object($this, $message);
             }
