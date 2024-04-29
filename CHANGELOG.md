@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.12](https://github.com/spartan/queue/compare/v0.1.11...v0.1.12) (2024-04-29)
+
+
+### Changes
+
+* replace opis/closure to support php 8.1 ([f3ab92a](https://github.com/spartan/queue/commit/f3ab92a9bdf59b17fa8109f9a2099b678e5e39ab))
+
 ### [0.1.11](https://github.com/spartan/queue/compare/v0.1.10...v0.1.11) (2024-01-20)
 
 
