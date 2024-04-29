@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.13](https://github.com/spartan/queue/compare/v0.1.12...v0.1.13) (2024-04-29)
+
+
+### Fixes
+
+* fix consumer tag as string issue with php 8.1 ([47b7d8a](https://github.com/spartan/queue/commit/47b7d8af38d52dab79ffcef137986d2c6c259591))
+
 ### [0.1.12](https://github.com/spartan/queue/compare/v0.1.11...v0.1.12) (2024-04-29)
 
 
