@@ -25,7 +25,7 @@
         "php": ">=7.4",
         "enqueue/amqp-ext": "^0.10.0",
         "enqueue/dsn": "^0.10.0",
-        "opis/closure": "^3.1",
+        "silverstripe/closure": "^3.0",
         "spartan/console": "^0.1.0",
         "spartan/service": "^0.1.0"
     },

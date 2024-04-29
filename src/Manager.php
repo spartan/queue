@@ -228,6 +228,9 @@ class Manager
     {
         if (!$this->queue) {
             $this->queue = $this->context->createQueue(self::QUEUE_NAME);
+            // Starting w/ PHP 8.1:
+            // AMQPQueue::consume(): Passing null to parameter #3 ($consumer_tag) of type string is deprecated
+            $this->queue->setConsumerTag('default');
         }
 
         return $this->queue;
