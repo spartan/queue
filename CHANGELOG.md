@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.14](https://github.com/spartan/queue/compare/v0.1.13...v0.1.14) (2025-12-19)
+
+
+### Changes
+
+* accept spartan/console:0.2 ([b0767b3](https://github.com/spartan/queue/commit/b0767b37cb2174ff341c679b2a94ad3e0eac993d))
+
 ### [0.1.13](https://github.com/spartan/queue/compare/v0.1.12...v0.1.13) (2024-04-29)
 
 
