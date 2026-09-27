@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.15](https://github.com/spartan/queue/compare/v0.1.14...v0.1.15) (2026-09-27)
+
+
+### Fixes
+
+* queue task failing silently ([50339a8](https://github.com/spartan/queue/commit/50339a8bc8036770d9875a3dd4b3ce6437c91e15))
+
 ### [0.1.14](https://github.com/spartan/queue/compare/v0.1.13...v0.1.14) (2025-12-19)
 
 
