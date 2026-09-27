@@ -333,6 +333,27 @@ class Manager
         return $this;
     }
 
+    protected function errorJson(\Throwable $e, Consumer $consumer, string $task): string
+    {
+        return (string)json_encode(
+            [
+                'message' => $e->getMessage(),
+                'error'   => get_class($e),
+                'file'    => $e->getFile() . ':' . $e->getLine(),
+                'trace'   => $e->getTraceAsString(), // getTrace() args may not be encodable
+                'queue'   => $consumer->getQueue()->getQueueName(),
+                'task'    => substr($task, 0, 10000), // serialized body can be large
+                'time'    => date('Y-m-d H:i:s'),
+            ],
+            JSON_INVALID_UTF8_SUBSTITUTE | JSON_PARTIAL_OUTPUT_ON_ERROR
+        );
+    }
+
+    protected function logError(\Throwable $e, Consumer $consumer, string $task): void
+    {
+        error_log('[spartan/queue] ' . $this->errorJson($e, $consumer, $task));
+    }
+
     /**
      * @param SubscriptionConsumer $subscriptionConsumer
      *
@@ -341,8 +362,24 @@ class Manager
     public function closure(SubscriptionConsumer $subscriptionConsumer)
     {
         return function (Message $message, Consumer $consumer) use ($subscriptionConsumer) {
-            /** @var TaskInterface $task */
-            $task = \Opis\Closure\unserialize($message->getBody());
+            /*
+             * A message is always acknowledged, even when its task fails: an unacked message is
+             * redelivered to the restarted worker => fails again => the queue is stuck (poison message).
+             * \Throwable, not \Exception: an \Error (undefined method, TypeError...) must not kill the worker.
+             */
+            try {
+                /** @var TaskInterface $task */
+                $task = \Opis\Closure\unserialize($message->getBody());
+                if (!$task instanceof TaskInterface) {
+                    throw new \UnexpectedValueException('Message body is not a task');
+                }
+            } catch (\Throwable $e) {
+                // no task => nothing to hand to the error handler
+                $consumer->acknowledge($message);
+                $this->logError($e, $consumer, $message->getBody());
+
+                return true;
+            }
 
             if ($this->verbosity) {
                 echo 'Received ' . get_class($task) . "...\n";
@@ -370,25 +407,23 @@ class Manager
                 if (!$task->isFailed()) {
                     $task->markAsFinished();
                 }
-            } catch (\Exception $e) {
+            } catch (\Throwable $e) {
                 // if errors are not handled by task
-                if ($this->errHandler) {
+                if (!$this->errHandler) {
+                    // ack first => the worker stops (as before) but the message is not redelivered
+                    $consumer->acknowledge($message);
+
+                    throw new ConsumerException($this->errorJson($e, $consumer, $message->getBody()));
+                }
+
+                try {
                     $className = trim($this->errHandler, '\'"');
                     $object    = new $className;
                     $object($this, $task, $e, $consumer->getQueue()->getQueueName());
-                } else {
-                    throw new ConsumerException(
-                        (string)json_encode(
-                            [
-                                'message' => $e->getMessage(),
-                                'file'    => $e->getFile() . ':' . $e->getLine(),
-                                'trace'   => $e->getTrace(),
-                                'queue'   => $consumer->getQueue()->getQueueName(),
-                                'task'    => $message->getBody(),
-                                'time'    => date('Y-m-d H:i:s'),
-                            ]
-                        )
-                    );
+                } catch (\Throwable $handlerError) {
+                    // a failing error handler must not stop the ack either
+                    $this->logError($e, $consumer, $message->getBody());
+                    $this->logError($handlerError, $consumer, get_class($task));
                 }
             }
 

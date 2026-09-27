@@ -7,7 +7,7 @@ use Spartan\Queue\Manager;
 
 class MoveOnError
 {
-    public function __invoke(Manager $manager, TaskInterface $task, \Exception $e, string $queueName)
+    public function __invoke(Manager $manager, TaskInterface $task, \Throwable $e, string $queueName)
     {
         $task->withAttributes([
             'exception' => [
