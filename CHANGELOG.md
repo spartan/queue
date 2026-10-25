@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.16](https://github.com/spartan/queue/compare/v0.1.15...v0.1.16) (2026-10-25)
+
+
+### Fixes
+
+* improve move-on-error handler ([b892133](https://github.com/spartan/queue/commit/b89213386449b6c77b279b1da9b4f409d7c4e612))
+
 ### [0.1.15](https://github.com/spartan/queue/compare/v0.1.14...v0.1.15) (2026-09-27)
 
 
