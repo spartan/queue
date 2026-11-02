@@ -45,6 +45,11 @@ class Manager
     const PRIORITY_LOW       = 1;
     const PRIORITY_VERY_LOW  = 0;
 
+    /**
+     * Max time (ms) a blocking wait lasts before the stop flag is checked again
+     */
+    const CONSUME_SLICE_MS = 1000;
+
     protected Context $context;
 
     /**
@@ -59,6 +64,13 @@ class Manager
     protected ?ContainerInterface $container = null;
 
     protected bool $verbosity = false;
+
+    /**
+     * Set by a stop signal (or stop()): no new task is started, the consume loop exits
+     */
+    protected bool $stopping = false;
+
+    protected bool $signalsBlocked = false;
 
     /**
      * @var mixed
@@ -318,9 +330,86 @@ class Manager
             );
         }
 
-        $subscriptionConsumer->consume($timeout);
+        if ($timeout > 0) {
+            $subscriptionConsumer->consume($timeout);
+
+            return $this;
+        }
+
+        $this->listenForStopSignals();
+
+        // wait in short slices instead of blocking forever => an idle worker notices SIGTERM within a slice
+        while (!$this->isStopping()) {
+            $subscriptionConsumer->consume(self::CONSUME_SLICE_MS);
+        }
+
+        try {
+            // basic.cancel => the broker stops delivering; unacked prefetched messages are requeued on close
+            $subscriptionConsumer->unsubscribeAll();
+            $this->context->close();
+        } catch (\Throwable $e) {
+            // the process is exiting anyway: a broken connection is not worth a failure
+        }
 
         return $this;
+    }
+
+    /**
+     * SIGTERM, SIGQUIT (k8s / docker stop, see stopSignals) or SIGINT => finish the current task, ack it, then exit.
+     *
+     * The signals are blocked and polled (isStopping) instead of handled: a pcntl handler is lost when the
+     * signal arrives while ext-amqp waits inside consume() (the usual state of an idle worker), and the
+     * worker usually runs as PID 1 in a container, where an unhandled SIGTERM is ignored anyway.
+     * Blocked signals are inherited by child processes started from a task (exec, proc_open...).
+     *
+     * @return $this
+     */
+    public function listenForStopSignals(): self
+    {
+        if (function_exists('pcntl_sigprocmask')) {
+            $this->signalsBlocked = pcntl_sigprocmask(SIG_BLOCK, $this->stopSignals());
+        }
+
+        return $this;
+    }
+
+    /**
+     * SIGQUIT: images built FROM php:*-fpm inherit `STOPSIGNAL SIGQUIT` => docker stop / k8s send SIGQUIT, not SIGTERM.
+     * A method, not a constant: the SIG* constants exist only with ext-pcntl.
+     *
+     * @return int[]
+     */
+    protected function stopSignals(): array
+    {
+        return [SIGTERM, SIGINT, SIGQUIT];
+    }
+
+    /**
+     * @return $this
+     */
+    public function stop(): self
+    {
+        $this->stopping = true;
+
+        return $this;
+    }
+
+    /**
+     * Picks up a pending stop signal (non-blocking)
+     */
+    public function isStopping(): bool
+    {
+        if (!$this->stopping && $this->signalsBlocked) {
+            $signal = pcntl_sigtimedwait($this->stopSignals(), $info, 0, 0);
+            if ($signal > 0) {
+                if ($this->verbosity) {
+                    echo "Signal {$signal} received, stopping...\n";
+                }
+                $this->stopping = true;
+            }
+        }
+
+        return $this->stopping;
     }
 
     /**
@@ -362,6 +451,13 @@ class Manager
     public function closure(SubscriptionConsumer $subscriptionConsumer)
     {
         return function (Message $message, Consumer $consumer) use ($subscriptionConsumer) {
+            // delivered after the stop signal => back to the queue, for the next worker
+            if ($this->isStopping()) {
+                $consumer->reject($message, true);
+
+                return false; // stops consume()
+            }
+
             /*
              * A message is always acknowledged, even when its task fails: an unacked message is
              * redelivered to the restarted worker => fails again => the queue is stuck (poison message).
@@ -435,7 +531,8 @@ class Manager
                 $object($this, $message);
             }
 
-            return true;
+            // stop signal received while the task ran => stop consume() now that it is acked
+            return !$this->isStopping();
         };
     }
 }
