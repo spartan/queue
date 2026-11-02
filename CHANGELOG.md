@@ -1,4 +1,11 @@
 # Changelog
+### [0.1.17](https://github.com/spartan/queue/compare/v0.1.16...v0.1.17) (2026-11-02)
+
+
+### Fixes
+
+* stop worker gracefully on SIGTERM/SIGQUIT ([0221181](https://github.com/spartan/queue/commit/0221181601a979b155b9459542e6b8c77df28696))
+
 ### [0.1.16](https://github.com/spartan/queue/compare/v0.1.15...v0.1.16) (2026-10-25)
 
 
